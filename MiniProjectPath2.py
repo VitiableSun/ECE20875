@@ -43,7 +43,9 @@ for dropped_bridge in bridges:
         'dropped_bridge': dropped_bridge,
         'selected_bridges': selected_bridges,
         'r2': r2,
-        'mse': mse
+        'mse': mse,
+        'coefficients': dict(zip(selected_bridges, model.coef_)),
+        'intercept': model.intercept_
     })
 
 print('\nQuestion 1: Sensor placement')
@@ -51,6 +53,9 @@ for result in q1_results:
     print('Install on ' + ', '.join(result['selected_bridges']) + '; drop ' + result['dropped_bridge'] + ': R^2=' + format(result['r2'], '.6f') + ', MSE=' + format(result['mse'], '.2f'))
 best_q1 = max(q1_results, key=lambda item: item['r2'])
 print('Recommendation: Install sensors on: ' + ', '.join(best_q1['selected_bridges']) + '. Drop: ' + best_q1['dropped_bridge'] + '.')
+for bridge, coefficient in best_q1['coefficients'].items():
+    print(bridge + ' coefficient: ' + format(coefficient, '.6f'))
+print('Best model intercept: ' + format(best_q1['intercept'], '.6f'))
 
 weather_features = ['High Temp', 'Low Temp', 'Precipitation']
 X_weather = dataset_2[weather_features]
