@@ -1,0 +1,268 @@
+================================================================================
+PRD -- PATH 2, HALF B: Visualization + Classification (Q3) + Report Assembly
+================================================================================
+
+Parallel split: Half B owns Q3 (day-of-week pattern visualization and
+classification) and final report PDF assembly. Half A owns data loading,
+cleaning, and both regression questions (Q1 and Q2). Half A and Half B can
+be developed simultaneously with no dependency between them -- each half
+includes its own self-contained data loading block.
+
+DUE DATE: Friday, May 1, 2026 at 11:59pm ET
+
+--------------------------------------------------------------------------------
+1. SCOPE OF HALF B
+--------------------------------------------------------------------------------
+
+Half B is responsible for:
+  - Data loading and cleaning (shared logic, duplicated in both halves)
+  - Question 3: Day-of-week pattern visualization + day classification
+  - Report sections: Methods + Results for Q3, and final PDF assembly
+
+Half B does NOT need to touch:
+  - Q1 (sensor placement regression) -- that is Half A
+  - Q2 (weather regression) -- that is Half A
+
+--------------------------------------------------------------------------------
+2. DATA LOADING AND CLEANING
+--------------------------------------------------------------------------------
+
+File: nyc_bicycle_counts_2016.csv
+
+Each row = one day of bike traffic, April 1 to October 31, 2016 (~214 rows).
+
+Columns:
+  - Date             : Date string (e.g., "1-Apr")
+  - Day              : Day of week string (e.g., "Friday")
+  - High Temp        : Highest temp that day (Fahrenheit, numeric)
+  - Low Temp         : Lowest temp that day (Fahrenheit, numeric)
+  - Precipitation    : Precipitation in inches (numeric)
+  - Brooklyn Bridge  : Bike count, stored as comma-formatted string
+  - Manhattan Bridge : Bike count, stored as comma-formatted string
+  - Williamsburg Bridge : Bike count, stored as comma-formatted string
+  - Queensboro Bridge   : Bike count, stored as comma-formatted string
+  - Total            : Sum of all 4 bridges, stored as comma-formatted string
+
+Required cleaning steps (do all of these):
+  1. Fix the filename: starter code says 'NYC_Bicycle_Counts_2016.csv' but the
+     actual file is 'nyc_bicycle_counts_2016.csv' (all lowercase). Use the
+     lowercase version.
+  2. Strip commas and convert to numeric for ALL five count columns:
+       Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge,
+       Queensboro Bridge, Total
+     Use: pandas.to_numeric(col.replace(',', '', regex=True))
+  3. Verify no NaN values remain after conversion. Drop or flag any bad rows.
+
+Half B primarily needs these columns for Q3:
+  - Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge, Queensboro Bridge
+    (as features for the classifier)
+  - Day  (as the target label for classification, and for grouping in Part A)
+  - Total (for the weekly average visualization in Part A)
+
+Additional step specific to Half B:
+  - Encode the Day column as integer class labels for classification.
+  - Use a consistent ordering, e.g.:
+      Monday=0, Tuesday=1, Wednesday=2, Thursday=3,
+      Friday=4, Saturday=5, Sunday=6
+  - Either use a manual dict mapping or sklearn's LabelEncoder.
+  - Keep the original string Day column for visualization labels.
+
+--------------------------------------------------------------------------------
+3. QUESTION 3: DAY-OF-WEEK PATTERNS AND CLASSIFICATION
+--------------------------------------------------------------------------------
+
+This question has two parts. Both must be completed.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PART A -- Visualization: Weekly Traffic Patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Goal:
+  Analyze whether bike traffic shows consistent patterns across days of the
+  week. Visualize those patterns.
+
+Method:
+  - Group the dataset by the Day column.
+  - Compute the mean Total bike count for each day of the week.
+  - Plot the result as a bar chart or line plot with days in order
+    (Monday through Sunday on the x-axis, average Total on the y-axis).
+  - Optionally: also plot per-bridge averages by day (grouped bar chart)
+    for richer insight.
+
+Ordering note:
+  The Day column contains strings. When grouping and plotting, sort days in
+  the correct weekly order (Mon, Tue, Wed, Thu, Fri, Sat, Sun) rather than
+  alphabetical order.
+
+Expected deliverable from code:
+  - A bar chart or line plot of average Total by day of week.
+  - Print the average Total per day to the console as well.
+
+Interpretation to address:
+  - Are weekdays consistently higher or lower than weekends?
+  - Is there a clear peak day or trough day?
+  - Does the pattern make intuitive sense (e.g., commuters driving up
+    weekday counts)?
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+PART B -- Classification: Predict Day of Week
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Goal:
+  Build a classifier that predicts the day of the week (7 classes: Monday
+  through Sunday) from the four bridge counts alone.
+
+Features (X): Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge,
+              Queensboro Bridge
+Target (y):   Day of week (encoded as integer 0-6)
+
+Train/test split:
+  - Use an 80/20 train/test split (random_state=42 for reproducibility).
+  - Fit the classifier on training data, evaluate on test data.
+  - Note: with ~214 rows total, the test set will be ~43 rows. This is small,
+    so results may vary; acknowledge this in the report.
+
+Classifier choice:
+  - Pick one (or more) classifier(s). Good options:
+      * LogisticRegression (simple, interpretable baseline)
+      * KNeighborsClassifier (non-parametric, good for small datasets)
+      * DecisionTreeClassifier (interpretable, handles non-linearity)
+      * RandomForestClassifier (more robust, ensemble)
+  - You must justify your choice in the report.
+  - If you test multiple classifiers, compare their accuracy.
+
+Evaluation:
+  - Report overall accuracy on the test set.
+  - Produce a confusion matrix to see which days are confused with each other.
+  - Optional: print a classification report (precision, recall, F1 per class).
+
+Expected deliverable from code:
+  - Print test accuracy for the chosen classifier.
+  - Display or print the confusion matrix.
+  - Optional: bar chart of per-class accuracy or the full classification report.
+
+Report content -- what to discuss:
+  - Is accuracy high or low? (Given only 4 features and 7 classes, do not
+    necessarily expect high accuracy.)
+  - Which days are easiest to classify correctly (likely weekends, which have
+    distinct lower traffic patterns)?
+  - Which days are hardest (likely mid-week days that look similar to each
+    other)?
+  - Does the confusion matrix reveal that the model confuses adjacent weekdays
+    more than weekdays vs. weekends?
+  - Why might classification be inherently difficult here? (Only 4 numeric
+    features, 7 classes, small dataset, overlapping distributions between
+    similar weekdays.)
+
+--------------------------------------------------------------------------------
+4. CODE FILE STRUCTURE FOR HALF B
+--------------------------------------------------------------------------------
+
+All Half B code goes in MiniProjectPath2.py (same file as Half A -- coordinate
+to merge without conflicts when combining).
+Suggested section layout within the file:
+
+  # ---- DATA LOADING AND CLEANING (Half B copy) ----
+  (import pandas, numpy, sklearn components)
+  (load CSV with corrected filename)
+  (convert all count columns + Total to numeric)
+  (encode Day column as integer labels, keep original for display)
+
+  # ---- QUESTION 3 PART A: WEEKLY PATTERN VISUALIZATION ----
+  (group by Day, compute mean Total per day)
+  (sort days in correct weekly order: Mon-Sun)
+  (bar chart or line plot of average Total by day)
+  (print average per day)
+
+  # ---- QUESTION 3 PART B: DAY-OF-WEEK CLASSIFICATION ----
+  (define X = 4 bridge columns, y = encoded Day)
+  (train/test split)
+  (instantiate and fit classifier)
+  (predict on test set)
+  (print accuracy and confusion matrix)
+  (optional: classification report)
+
+Required imports for Half B:
+  import pandas
+  import numpy as np
+  import matplotlib.pyplot as plt
+  from sklearn.model_selection import train_test_split
+  from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+  from sklearn.preprocessing import LabelEncoder
+  from sklearn.linear_model import LogisticRegression        # or whichever you pick
+  # from sklearn.neighbors import KNeighborsClassifier
+  # from sklearn.tree import DecisionTreeClassifier
+  # from sklearn.ensemble import RandomForestClassifier
+
+--------------------------------------------------------------------------------
+5. REPORT SECTIONS OWNED BY HALF B
+--------------------------------------------------------------------------------
+
+Half B writes the following sections of report.pdf AND assembles the final PDF:
+
+  Section 3 (Q3 portion) -- Methods for Q3:
+    - Part A: why you chose to visualize weekly averages and what you expected
+    - Part B: which classifier you chose, why, and what you expected
+
+  Section 4 (Q3 portion) -- Results for Q3:
+    - Part A: weekly average visualization, description of pattern observed
+    - Part B: accuracy, confusion matrix, interpretation of which days are
+      easy vs. hard to classify and why
+
+  Final PDF assembly:
+    - Receive draft sections from Half A (Team Info, Dataset Description,
+      Q1 methods/results, Q2 methods/results).
+    - Combine with Half B's Q3 sections into a single cohesive document.
+    - Export as report.pdf (NOT .docx or any other format).
+    - Verify the PDF is complete with all required sections before submitting.
+
+Report section order:
+  1. Team Info (from Half A)
+  2. Dataset Description (from Half A)
+  3. Methods -- Q1 (from Half A), Q2 (from Half A), Q3 (from Half B)
+  4. Results -- Q1 (from Half A), Q2 (from Half A), Q3 (from Half B)
+
+--------------------------------------------------------------------------------
+6. SUBMISSION RESPONSIBILITIES (HALF B)
+--------------------------------------------------------------------------------
+
+Half B (or the designated team lead) handles Gradescope submission:
+  - Submit MiniProjectPath2.py (merged code from both halves)
+  - Submit report.pdf
+  - Do NOT submit a zip/archive
+  - Use Gradescope's group submission feature to link both team members
+  - Verify submission went through before the deadline
+
+--------------------------------------------------------------------------------
+7. HALF B DELIVERABLE CHECKLIST
+--------------------------------------------------------------------------------
+
+Code:
+  [ ] Filename bug fixed (lowercase csv name) in Half B's data loading block
+  [ ] Total column converted to numeric
+  [ ] Day column encoded as integer labels (0-6, Mon-Sun)
+  [ ] Q3 Part A: average Total per day computed and plotted (bar or line chart)
+  [ ] Q3 Part A: days sorted in correct weekly order in the plot
+  [ ] Q3 Part B: classifier chosen, fitted, and evaluated on test set
+  [ ] Q3 Part B: test accuracy printed
+  [ ] Q3 Part B: confusion matrix printed or displayed
+  [ ] Code runs end-to-end without errors
+
+Report:
+  [ ] Q3 methods paragraph written (Part A and Part B)
+  [ ] Q3 results section written with weekly pattern figure
+  [ ] Q3 results section written with accuracy, confusion matrix, interpretation
+  [ ] Sections received from Half A (Team Info, Dataset, Q1, Q2)
+  [ ] All sections combined into single cohesive document
+  [ ] Exported as report.pdf (not .docx)
+  [ ] PDF verified complete and correct before submission
+
+Submission:
+  [ ] MiniProjectPath2.py submitted to Gradescope
+  [ ] report.pdf submitted to Gradescope
+  [ ] Group submission feature used to link both team members (if applicable)
+  [ ] Submitted before May 1, 2026 at 11:59pm ET
+
+================================================================================
+END OF HALF B DOCUMENT
+================================================================================

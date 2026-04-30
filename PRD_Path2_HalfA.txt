@@ -1,0 +1,243 @@
+================================================================================
+PRD -- PATH 2, HALF A: Data Loading + Regression Analyses (Q1 and Q2)
+================================================================================
+
+Parallel split: Half A owns data loading/cleaning and both regression questions
+(Q1 and Q2). Half B owns visualization, classification (Q3), and report
+assembly. Half A and Half B can be developed simultaneously with no dependency
+between them -- each half includes its own self-contained data loading block.
+
+DUE DATE: Friday, May 1, 2026 at 11:59pm ET
+
+--------------------------------------------------------------------------------
+1. SCOPE OF HALF A
+--------------------------------------------------------------------------------
+
+Half A is responsible for:
+  - Data loading and cleaning (shared logic, duplicated in both halves)
+  - Question 1: Sensor placement -- which 3 bridges best predict Total traffic
+  - Question 2: Weather-based regression -- predict Total from weather features
+  - Report sections: Dataset Description, and Methods + Results for Q1 and Q2
+
+Half A does NOT need to touch:
+  - Day-of-week visualization or classification (Q3) -- that is Half B
+  - Final report PDF compilation -- that is Half B
+
+--------------------------------------------------------------------------------
+2. DATA LOADING AND CLEANING
+--------------------------------------------------------------------------------
+
+File: nyc_bicycle_counts_2016.csv
+
+Each row = one day of bike traffic, April 1 to October 31, 2016 (~214 rows).
+
+Columns:
+  - Date             : Date string (e.g., "1-Apr")
+  - Day              : Day of week string (e.g., "Friday")
+  - High Temp        : Highest temp that day (Fahrenheit, numeric)
+  - Low Temp         : Lowest temp that day (Fahrenheit, numeric)
+  - Precipitation    : Precipitation in inches (numeric)
+  - Brooklyn Bridge  : Bike count, stored as comma-formatted string
+  - Manhattan Bridge : Bike count, stored as comma-formatted string
+  - Williamsburg Bridge : Bike count, stored as comma-formatted string
+  - Queensboro Bridge   : Bike count, stored as comma-formatted string
+  - Total            : Sum of all 4 bridges, stored as comma-formatted string
+
+Required cleaning steps (do all of these):
+  1. Fix the filename: starter code says 'NYC_Bicycle_Counts_2016.csv' but the
+     actual file is 'nyc_bicycle_counts_2016.csv' (all lowercase). Use the
+     lowercase version.
+  2. Strip commas and convert to numeric for ALL five count columns:
+       Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge,
+       Queensboro Bridge, Total
+     Use: pandas.to_numeric(col.replace(',', '', regex=True))
+  3. Verify no NaN values remain after conversion. Drop or flag any bad rows.
+
+Half A only needs these columns for its analyses:
+  - Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge, Queensboro Bridge
+    (as features for Q1)
+  - High Temp, Low Temp, Precipitation (as features for Q2)
+  - Total (as the target for both Q1 and Q2)
+
+--------------------------------------------------------------------------------
+3. QUESTION 1: SENSOR PLACEMENT
+--------------------------------------------------------------------------------
+
+Goal:
+  Determine which 3 of the 4 bridges to install sensors on so that Total bike
+  traffic can be estimated as accurately as possible. Equivalently: find which
+  single bridge is the least informative and can be left out.
+
+Method -- Linear Regression (feature subset evaluation):
+  - Treat the 3 bridge counts as input features (X) and Total as the target (y).
+  - Try all 4 possible three-bridge subsets:
+      Subset 1: Manhattan, Williamsburg, Queensboro (drop Brooklyn)
+      Subset 2: Brooklyn, Williamsburg, Queensboro  (drop Manhattan)
+      Subset 3: Brooklyn, Manhattan, Queensboro     (drop Williamsburg)
+      Subset 4: Brooklyn, Manhattan, Williamsburg   (drop Queensboro)
+  - For each subset, fit a LinearRegression model and evaluate performance.
+
+Train/test split:
+  - Use an 80/20 train/test split (random_state=42 for reproducibility).
+  - Fit the model on training data, evaluate on test data.
+
+Evaluation metric:
+  - Report R^2 (coefficient of determination) for each subset on the test set.
+  - Optionally also report MSE or RMSE.
+  - The subset with the highest test R^2 is the recommended 3-bridge set.
+
+Expected deliverable from code:
+  - Print the R^2 (and optionally MSE) for all 4 subsets.
+  - Print a clear recommendation: "Install sensors on: [Bridge A], [Bridge B],
+    [Bridge C]. Drop: [Bridge D]."
+  - Optional: a bar chart comparing R^2 across the 4 subsets.
+
+Report content for Q1 (write these sections):
+  Methods paragraph:
+    - State that you used linear regression with 3-bridge subsets.
+    - Justify why: linear regression is appropriate because Total is a
+      continuous variable and is likely a near-linear sum of the individual
+      bridge counts. Feature subset comparison via R^2 is a principled way
+      to identify the least informative bridge.
+    - State your expectation: the bridge with the lowest individual traffic
+      (or the highest correlation with others) is most likely to be dropped.
+  Results paragraph:
+    - Report the R^2 for each subset.
+    - State which 3 bridges you recommend.
+    - Discuss why the dropped bridge was least informative (e.g., is its
+      traffic volume lower? Is it highly correlated with another bridge?).
+
+--------------------------------------------------------------------------------
+4. QUESTION 2: WEATHER-BASED TRAFFIC PREDICTION
+--------------------------------------------------------------------------------
+
+Goal:
+  Determine whether next-day weather forecasts (High Temp, Low Temp,
+  Precipitation) can be used to predict total daily bike traffic (Total).
+
+Method -- Linear Regression:
+  - Features (X): High Temp, Low Temp, Precipitation
+  - Target (y): Total
+  - Fit a LinearRegression model and evaluate predictive performance.
+
+Train/test split:
+  - Use an 80/20 train/test split (random_state=42 for reproducibility).
+  - Fit on training data, evaluate on test data.
+
+Evaluation:
+  - Report R^2 and MSE/RMSE on the test set.
+  - Print the regression coefficients for each feature (High Temp, Low Temp,
+    Precipitation) to understand direction and magnitude of effect.
+
+Visualization (required):
+  - Scatter plot: predicted Total (x-axis) vs. actual Total (y-axis).
+  - Include a y=x reference line so it is easy to see how well predictions
+    track reality.
+
+Expected deliverable from code:
+  - Print coefficients, intercept, R^2, and MSE on test set.
+  - Display the predicted vs. actual scatter plot.
+
+Report content for Q2 (write these sections):
+  Methods paragraph:
+    - State that you used linear regression with weather variables as features.
+    - Justify why: Total is continuous and weather is a plausible predictor of
+      outdoor activity. Linear regression gives interpretable coefficients.
+    - State what you expect: higher temps likely increase ridership; more
+      precipitation likely decreases it.
+  Results paragraph:
+    - Report R^2 -- is it high enough to be practically useful for police
+      deployment decisions?
+    - Discuss coefficient signs: does higher temp increase predicted ridership?
+      Does more precipitation decrease it? Do the signs match intuition?
+    - If R^2 is low, explain possible reasons (e.g., weather alone may not
+      capture day-of-week effects, special events, seasonality within the range,
+      etc.).
+    - Include the predicted vs. actual scatter plot as a figure.
+
+--------------------------------------------------------------------------------
+5. CODE FILE STRUCTURE FOR HALF A
+--------------------------------------------------------------------------------
+
+All Half A code goes in MiniProjectPath2.py.
+Suggested section layout within the file:
+
+  # ---- DATA LOADING AND CLEANING ----
+  (import pandas, numpy, sklearn components)
+  (load CSV with corrected filename)
+  (convert all count columns + Total to numeric)
+
+  # ---- QUESTION 1: SENSOR PLACEMENT ----
+  (define feature subsets)
+  (loop or explicit: fit LinearRegression for each subset)
+  (print R^2 and MSE per subset)
+  (print recommendation)
+  (optional: bar chart)
+
+  # ---- QUESTION 2: WEATHER PREDICTION ----
+  (define X = [High Temp, Low Temp, Precipitation], y = Total)
+  (train/test split)
+  (fit LinearRegression)
+  (print coefficients, R^2, MSE)
+  (scatter plot: predicted vs. actual)
+
+Required imports for Half A:
+  import pandas
+  import numpy as np
+  import matplotlib.pyplot as plt
+  from sklearn.linear_model import LinearRegression
+  from sklearn.model_selection import train_test_split
+  from sklearn.metrics import r2_score, mean_squared_error
+
+--------------------------------------------------------------------------------
+6. REPORT SECTIONS OWNED BY HALF A
+--------------------------------------------------------------------------------
+
+Half A writes the following sections of report.pdf:
+
+  Section 1 -- Team Info (coordinate with Half B on names/usernames):
+    - Name(s), Purdue username(s), Path 2
+
+  Section 2 -- Dataset Description:
+    - Describe nyc_bicycle_counts_2016.csv
+    - Date range (April 1 to October 31, 2016), ~214 rows
+    - Describe all 10 columns and their meaning
+    - Describe preprocessing (comma removal, numeric conversion)
+
+  Section 3 (Q1 portion) -- Methods for Q1:
+    - Why linear regression, why R^2 as metric, what you expected
+
+  Section 4 (Q1 portion) -- Results for Q1:
+    - R^2 for each subset, recommendation, intuitive explanation
+
+  Section 3 (Q2 portion) -- Methods for Q2:
+    - Why linear regression, expected direction of weather effects
+
+  Section 4 (Q2 portion) -- Results for Q2:
+    - Coefficients, R^2, scatter plot, practical usefulness discussion
+
+Half B will add Q3 sections and compile the final PDF.
+
+--------------------------------------------------------------------------------
+7. HALF A DELIVERABLE CHECKLIST
+--------------------------------------------------------------------------------
+
+Code:
+  [ ] Filename bug fixed (lowercase csv name)
+  [ ] Total column converted to numeric
+  [ ] Q1: all 4 subsets evaluated with R^2 (and optionally MSE)
+  [ ] Q1: recommendation printed clearly
+  [ ] Q2: LinearRegression fitted on weather features
+  [ ] Q2: coefficients, R^2, MSE printed
+  [ ] Q2: predicted vs. actual scatter plot produced
+  [ ] Code runs end-to-end without errors
+
+Report sections (hand off draft to Half B for final PDF):
+  [ ] Section 1: Team info
+  [ ] Section 2: Dataset description
+  [ ] Q1 methods and results paragraphs (with any figures)
+  [ ] Q2 methods and results paragraphs (with scatter plot figure)
+
+================================================================================
+END OF HALF A DOCUMENT
+================================================================================
