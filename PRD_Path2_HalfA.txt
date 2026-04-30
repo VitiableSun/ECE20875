@@ -156,25 +156,45 @@ Report content for Q2 (write these sections):
     - Include the predicted vs. actual scatter plot as a figure.
 
 --------------------------------------------------------------------------------
-5. CODE FILE STRUCTURE FOR HALF A
+5. CODE FORMATTING RULES
+--------------------------------------------------------------------------------
+
+These rules apply to every line of code written for Half A. Follow them exactly.
+
+  1. DO NOT delete any lines of code or comments already present in the starter
+     file (MiniProjectPath2.py). The skeleton must remain unchanged. Only add
+     new code; never remove or overwrite existing lines.
+
+  2. Do not use special formatting for readability or aesthetic purposes.
+     No decorative comment banners, no extra blank lines for visual spacing,
+     no aligned spacing between variable assignments. Write code the way a
+     person naturally would when solving a problem, not the way an automated
+     tool would format it.
+
+  3. Only add a comment if it is a direct quote from the project documents
+     (README.pdf or README-nyc_bicycle_counts_2016.pdf). Do not paraphrase.
+     Do not write comments that describe what the code does, explain logic,
+     label sections, or add any other annotation not verbatim from the docs.
+     If the text does not appear word-for-word in the project documents,
+     do not write it as a comment.
+
+--------------------------------------------------------------------------------
+6. CODE FILE STRUCTURE FOR HALF A
 --------------------------------------------------------------------------------
 
 All Half A code goes in MiniProjectPath2.py.
 Suggested section layout within the file:
 
-  # ---- DATA LOADING AND CLEANING ----
   (import pandas, numpy, sklearn components)
   (load CSV with corrected filename)
   (convert all count columns + Total to numeric)
 
-  # ---- QUESTION 1: SENSOR PLACEMENT ----
   (define feature subsets)
   (loop or explicit: fit LinearRegression for each subset)
   (print R^2 and MSE per subset)
   (print recommendation)
   (optional: bar chart)
 
-  # ---- QUESTION 2: WEATHER PREDICTION ----
   (define X = [High Temp, Low Temp, Precipitation], y = Total)
   (train/test split)
   (fit LinearRegression)
@@ -190,7 +210,7 @@ Required imports for Half A:
   from sklearn.metrics import r2_score, mean_squared_error
 
 --------------------------------------------------------------------------------
-6. REPORT SECTIONS OWNED BY HALF A
+7. REPORT SECTIONS OWNED BY HALF A
 --------------------------------------------------------------------------------
 
 Half A writes the following sections of report.pdf:
@@ -219,7 +239,7 @@ Half A writes the following sections of report.pdf:
 Half B will add Q3 sections and compile the final PDF.
 
 --------------------------------------------------------------------------------
-7. HALF A DELIVERABLE CHECKLIST
+8. HALF A DELIVERABLE CHECKLIST
 --------------------------------------------------------------------------------
 
 Code:

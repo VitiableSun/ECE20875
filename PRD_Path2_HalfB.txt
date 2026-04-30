@@ -155,26 +155,46 @@ Report content -- what to discuss:
     similar weekdays.)
 
 --------------------------------------------------------------------------------
-4. CODE FILE STRUCTURE FOR HALF B
+4. CODE FORMATTING RULES
+--------------------------------------------------------------------------------
+
+These rules apply to every line of code written for Half B. Follow them exactly.
+
+  1. DO NOT delete any lines of code or comments already present in the starter
+     file (MiniProjectPath2.py). The skeleton must remain unchanged. Only add
+     new code; never remove or overwrite existing lines.
+
+  2. Do not use special formatting for readability or aesthetic purposes.
+     No decorative comment banners, no extra blank lines for visual spacing,
+     no aligned spacing between variable assignments. Write code the way a
+     person naturally would when solving a problem, not the way an automated
+     tool would format it.
+
+  3. Only add a comment if it is a direct quote from the project documents
+     (README.pdf or README-nyc_bicycle_counts_2016.pdf). Do not paraphrase.
+     Do not write comments that describe what the code does, explain logic,
+     label sections, or add any other annotation not verbatim from the docs.
+     If the text does not appear word-for-word in the project documents,
+     do not write it as a comment.
+
+--------------------------------------------------------------------------------
+5. CODE FILE STRUCTURE FOR HALF B
 --------------------------------------------------------------------------------
 
 All Half B code goes in MiniProjectPath2.py (same file as Half A -- coordinate
 to merge without conflicts when combining).
 Suggested section layout within the file:
 
-  # ---- DATA LOADING AND CLEANING (Half B copy) ----
   (import pandas, numpy, sklearn components)
   (load CSV with corrected filename)
   (convert all count columns + Total to numeric)
   (encode Day column as integer labels, keep original for display)
 
-  # ---- QUESTION 3 PART A: WEEKLY PATTERN VISUALIZATION ----
   (group by Day, compute mean Total per day)
   (sort days in correct weekly order: Mon-Sun)
   (bar chart or line plot of average Total by day)
   (print average per day)
 
-  # ---- QUESTION 3 PART B: DAY-OF-WEEK CLASSIFICATION ----
   (define X = 4 bridge columns, y = encoded Day)
   (train/test split)
   (instantiate and fit classifier)
@@ -189,13 +209,13 @@ Required imports for Half B:
   from sklearn.model_selection import train_test_split
   from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
   from sklearn.preprocessing import LabelEncoder
-  from sklearn.linear_model import LogisticRegression        # or whichever you pick
-  # from sklearn.neighbors import KNeighborsClassifier
-  # from sklearn.tree import DecisionTreeClassifier
-  # from sklearn.ensemble import RandomForestClassifier
+  from sklearn.linear_model import LogisticRegression
+  from sklearn.neighbors import KNeighborsClassifier
+  from sklearn.tree import DecisionTreeClassifier
+  from sklearn.ensemble import RandomForestClassifier
 
 --------------------------------------------------------------------------------
-5. REPORT SECTIONS OWNED BY HALF B
+6. REPORT SECTIONS OWNED BY HALF B
 --------------------------------------------------------------------------------
 
 Half B writes the following sections of report.pdf AND assembles the final PDF:
@@ -223,7 +243,7 @@ Report section order:
   4. Results -- Q1 (from Half A), Q2 (from Half A), Q3 (from Half B)
 
 --------------------------------------------------------------------------------
-6. SUBMISSION RESPONSIBILITIES (HALF B)
+7. SUBMISSION RESPONSIBILITIES (HALF B)
 --------------------------------------------------------------------------------
 
 Half B (or the designated team lead) handles Gradescope submission:
@@ -234,7 +254,7 @@ Half B (or the designated team lead) handles Gradescope submission:
   - Verify submission went through before the deadline
 
 --------------------------------------------------------------------------------
-7. HALF B DELIVERABLE CHECKLIST
+8. HALF B DELIVERABLE CHECKLIST
 --------------------------------------------------------------------------------
 
 Code:
