@@ -107,9 +107,9 @@ dataset_2['day_num'] = dataset_2['Day'].map(day_map)
 X_day = dataset_2[['Brooklyn Bridge', 'Manhattan Bridge', 'Williamsburg Bridge', 'Queensboro Bridge']].values
 y_day = dataset_2['day_num'].values
 X_day_train, X_day_test, y_day_train, y_day_test = train_test_split(X_day, y_day, test_size=0.2, random_state=42)
-for clf in [LogisticRegression(max_iter=1000), KNeighborsClassifier(), DecisionTreeClassifier(), RandomForestClassifier()]:
+for clf in [LogisticRegression(max_iter=1000, solver='saga'), KNeighborsClassifier(), DecisionTreeClassifier(random_state=42), RandomForestClassifier(random_state=42)]:
     clf.fit(X_day_train, y_day_train)
     y_day_pred = clf.predict(X_day_test)
     print(type(clf).__name__, accuracy_score(y_day_test, y_day_pred))
     print(confusion_matrix(y_day_test, y_day_pred))
-    print(classification_report(y_day_test, y_day_pred))
+    print(classification_report(y_day_test, y_day_pred, zero_division=0))
