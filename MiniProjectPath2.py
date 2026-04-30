@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 ''' 
 The following is the starting code for path2 for data reading to make your first step easier.
@@ -85,3 +90,26 @@ plt.ylabel('Actual Total')
 plt.title('Weather Model: Predicted vs Actual Total Bike Traffic')
 plt.tight_layout()
 plt.savefig('q2_predicted_vs_actual.png', dpi=200)
+
+day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+daily_avg = dataset_2.groupby('Day')['Total'].mean().reindex(day_order)
+print(daily_avg)
+plt.figure(figsize=(7, 5))
+plt.bar(day_order, daily_avg.values)
+plt.xlabel('Day of Week')
+plt.ylabel('Average Total Bicyclists')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig('q3a_weekly_pattern.png', dpi=200)
+
+day_map = {day: i for i, day in enumerate(day_order)}
+dataset_2['day_num'] = dataset_2['Day'].map(day_map)
+X_day = dataset_2[['Brooklyn Bridge', 'Manhattan Bridge', 'Williamsburg Bridge', 'Queensboro Bridge']].values
+y_day = dataset_2['day_num'].values
+X_day_train, X_day_test, y_day_train, y_day_test = train_test_split(X_day, y_day, test_size=0.2, random_state=42)
+for clf in [LogisticRegression(max_iter=1000), KNeighborsClassifier(), DecisionTreeClassifier(), RandomForestClassifier()]:
+    clf.fit(X_day_train, y_day_train)
+    y_day_pred = clf.predict(X_day_test)
+    print(type(clf).__name__, accuracy_score(y_day_test, y_day_pred))
+    print(confusion_matrix(y_day_test, y_day_pred))
+    print(classification_report(y_day_test, y_day_pred))
