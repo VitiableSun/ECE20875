@@ -22,6 +22,15 @@ For Question 2, I used linear regression to test whether weather forecast variab
 
 ## Results
 
-For Question 1, the script prints the R^2 and mean squared error for each possible three-bridge subset, then recommends the subset with the highest test-set R^2. Based on the implemented analysis, the report should use the printed recommendation from `MiniProjectPath2.py` after the script is run in an environment with the required dependencies.
+For Question 1, the best-performing three-bridge subset was Brooklyn Bridge, Manhattan Bridge, and Williamsburg Bridge, which means Queensboro Bridge was the best bridge to leave out. The test-set results were:
 
-For Question 2, the script prints the fitted weather model coefficients, intercept, R^2, mean squared error, and root mean squared error. It also saves a predicted-vs-actual plot as `q2_predicted_vs_actual.png`, with predicted total bicycle traffic on the x-axis and actual total bicycle traffic on the y-axis. If the model has a low R^2, that would suggest weather alone is not enough for reliable police deployment planning because the model ignores day-of-week effects, special events, commuting patterns, and seasonal changes within the April-to-October period.
+| Bridges used | Bridge dropped | R^2 | MSE |
+| --- | --- | ---: | ---: |
+| Manhattan Bridge, Williamsburg Bridge, Queensboro Bridge | Brooklyn Bridge | 0.983056 | 697676.76 |
+| Brooklyn Bridge, Williamsburg Bridge, Queensboro Bridge | Manhattan Bridge | 0.985601 | 592865.58 |
+| Brooklyn Bridge, Manhattan Bridge, Queensboro Bridge | Williamsburg Bridge | 0.995999 | 164725.04 |
+| Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge | Queensboro Bridge | 0.997635 | 97363.42 |
+
+The recommended sensor placement is Brooklyn Bridge, Manhattan Bridge, and Williamsburg Bridge. This subset had the highest R^2 and lowest MSE among the four tested subsets, so it gave the most accurate test-set prediction of total bridge traffic.
+
+For Question 2, the fitted weather model had coefficients of 380.087778 for `High Temp`, -177.041748 for `Low Temp`, and -8681.587256 for `Precipitation`, with an intercept of 1896.017071. The test-set R^2 was 0.575017, the MSE was 17498379.32, and the RMSE was 4183.11. The positive high-temperature coefficient and negative precipitation coefficient match the expectation that warmer days increase ridership and rainy days reduce ridership. However, the moderate R^2 suggests weather alone is not enough for highly reliable police deployment planning because the model ignores day-of-week effects, special events, commuting patterns, and seasonal changes within the April-to-October period. The predicted-vs-actual plot is saved as `q2_predicted_vs_actual.png`.
