@@ -1,0 +1,266 @@
+================================================================================
+PROJECT REQUIREMENTS DOCUMENT (PRD)
+ECE 20875 Mini Project -- Path 2: Bike Traffic
+================================================================================
+
+DUE DATE: Friday, May 1, 2026 at 11:59pm ET
+LATE SUBMISSIONS: NOT accepted
+SUBMISSION PLATFORM: Gradescope
+
+--------------------------------------------------------------------------------
+1. OVERVIEW
+--------------------------------------------------------------------------------
+This project asks you to act as a data scientist analyzing NYC bike traffic data.
+You will design and justify analyses, run them, interpret results, and write a
+report. Path 2 uses the nyc_bicycle_counts_2016.csv dataset.
+
+--------------------------------------------------------------------------------
+2. DATASET
+--------------------------------------------------------------------------------
+File: nyc_bicycle_counts_2016.csv
+
+Coverage: Daily bicycle traffic data from 04/01/2016 to 10/31/2016 in New York
+City across four major bridges.
+
+Columns:
+  - Date          : Date of measurement (e.g., "1-Apr")
+  - Day           : Day of the week (e.g., "Friday", "Saturday")
+  - High Temp     : Highest temperature of the day in Fahrenheit
+  - Low Temp      : Lowest temperature of the day in Fahrenheit
+  - Precipitation : Precipitation accumulation in inches
+  - Brooklyn Bridge     : Bike traffic count on Brooklyn Bridge that day
+  - Manhattan Bridge    : Bike traffic count on Manhattan Bridge that day
+  - Williamsburg Bridge : Bike traffic count on Williamsburg Bridge that day
+  - Queensboro Bridge   : Bike traffic count on Queensboro Bridge that day
+  - Total         : Sum of bike traffic across all four bridges that day
+
+Note: Bridge count columns are stored as strings with commas (e.g., "1,704")
+and must be converted to numeric values before analysis.
+
+--------------------------------------------------------------------------------
+3. STARTER CODE
+--------------------------------------------------------------------------------
+File: MiniProjectPath2.py
+
+The starter code loads the dataset and converts bridge columns to numeric:
+
+    import pandas
+    dataset_2 = pandas.read_csv('NYC_Bicycle_Counts_2016.csv')
+    dataset_2['Brooklyn Bridge']      = pandas.to_numeric(dataset_2['Brooklyn Bridge'].replace(',','', regex=True))
+    dataset_2['Manhattan Bridge']     = pandas.to_numeric(dataset_2['Manhattan Bridge'].replace(',','', regex=True))
+    dataset_2['Queensboro Bridge']    = pandas.to_numeric(dataset_2['Queensboro Bridge'].replace(',','', regex=True))
+    dataset_2['Williamsburg Bridge']  = pandas.to_numeric(dataset_2['Williamsburg Bridge'].replace(',','', regex=True))
+
+KNOWN BUG TO FIX: The filename in the starter code is 'NYC_Bicycle_Counts_2016.csv'
+(capital letters) but the actual file on disk is 'nyc_bicycle_counts_2016.csv'
+(all lowercase). This must be corrected before the code will run.
+
+The Total column also uses commas and must be converted to numeric similarly.
+
+--------------------------------------------------------------------------------
+4. ANALYSIS QUESTIONS (3 REQUIRED)
+--------------------------------------------------------------------------------
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QUESTION 1: Sensor Placement -- Which 3 Bridges?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Context:
+  You want to install sensors on bridges to estimate overall (Total) traffic.
+  Budget only allows sensors on 3 of the 4 bridges. You need to determine which
+  3 bridges to instrument so that Total traffic can be predicted as accurately
+  as possible.
+
+Task:
+  - Determine which single bridge can be dropped while still best predicting
+    Total traffic from the remaining three.
+  - In other words: which combination of 3 bridges gives the best prediction
+    of Total?
+
+Approach:
+  - Use linear regression with 3-bridge subsets as features and Total as target.
+  - Evaluate all 4 possible combinations (drop Brooklyn, drop Manhattan, drop
+    Williamsburg, drop Queensboro -- one at a time).
+  - Compare model performance across combinations using a metric such as R^2
+    or mean squared error (MSE).
+  - Recommend the best 3-bridge combination.
+
+Justification to include in report:
+  - Why linear regression is appropriate here.
+  - What metric you used to compare models and why.
+  - Which bridge was least informative and why that might make sense
+    intuitively (e.g., lower traffic volume, higher correlation with others).
+
+Expected output:
+  - A recommended set of 3 bridges.
+  - Regression coefficients and performance metric(s) for the best model.
+  - Optional: correlation matrix or scatter plots to support the choice.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QUESTION 2: Weather-Based Traffic Prediction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Context:
+  The city wants to deploy police officers on high-traffic days to enforce
+  helmet laws. They want to use next-day weather forecasts to predict whether
+  total bike traffic will be high.
+
+Task:
+  - Use weather features (High Temp, Low Temp, Precipitation) to predict
+    Total daily bike traffic.
+  - Determine how well weather alone can forecast ridership.
+
+Approach:
+  - Use linear regression with High Temp, Low Temp, and Precipitation as
+    features and Total as the target.
+  - Split data into training and test sets (or use cross-validation).
+  - Evaluate model performance using R^2 and/or MSE.
+  - Consider whether all three weather features contribute meaningfully, or
+    if some can be dropped.
+
+Justification to include in report:
+  - Why linear regression is appropriate.
+  - Which weather variables you expect to matter most and why.
+  - Whether the prediction quality is good enough to be practically useful.
+
+Expected output:
+  - Regression coefficients for each weather feature.
+  - Model performance metric(s) on test/validation data.
+  - A plot of predicted vs. actual Total values.
+  - Interpretation of whether the model is useful for deployment decisions.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+QUESTION 3: Day-of-Week Patterns and Classification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Part A -- Visualization and Pattern Analysis:
+  - Compute average Total (or per-bridge) bike traffic for each day of the
+    week (Monday through Sunday).
+  - Visualize the weekly pattern (e.g., bar chart or line plot of average
+    traffic by day).
+  - Identify and describe any trends: Are weekdays vs. weekends different?
+    Is there a peak day?
+
+Part B -- Day-of-Week Classification:
+  - Build a classifier that predicts the day of the week (7 classes:
+    Monday through Sunday) based on the bridge counts
+    (Brooklyn Bridge, Manhattan Bridge, Williamsburg Bridge, Queensboro Bridge).
+  - Choose an appropriate multi-class classifier (e.g., logistic regression,
+    k-nearest neighbors, decision tree, random forest, etc.).
+  - Evaluate the classifier using accuracy or another appropriate metric.
+  - Split data into training and test sets.
+
+Justification to include in report:
+  - Why you chose the classifier you used.
+  - Why you expect (or don't expect) day of week to be predictable from
+    bridge counts.
+  - Discussion of results -- does the model do well? Why or why not?
+
+Expected output:
+  - Weekly average traffic visualization.
+  - Classifier accuracy and/or confusion matrix.
+  - Interpretation of which days are easiest/hardest to classify correctly.
+
+--------------------------------------------------------------------------------
+5. CODE REQUIREMENTS
+--------------------------------------------------------------------------------
+
+File to write: MiniProjectPath2.py (extend the starter file)
+
+General requirements:
+  - Code must run if library dependencies are satisfied.
+  - No submission of zip/archive files -- submit .py files directly.
+  - Fix the filename capitalization bug in the starter code.
+  - Also convert the Total column to numeric (same method as bridge columns).
+
+Libraries expected:
+  - pandas           (data loading and manipulation)
+  - numpy            (numerical operations)
+  - sklearn          (regression and classification models, train/test split,
+                      metrics)
+  - matplotlib       (visualization)
+
+Suggested sklearn components:
+  - sklearn.linear_model.LinearRegression   (Q1 and Q2)
+  - sklearn.model_selection.train_test_split (Q2 and Q3)
+  - sklearn.metrics.mean_squared_error, r2_score (Q1 and Q2)
+  - A classifier of your choice for Q3 (e.g., LogisticRegression,
+    KNeighborsClassifier, DecisionTreeClassifier, RandomForestClassifier)
+  - sklearn.metrics.accuracy_score, confusion_matrix (Q3)
+
+Code structure (suggested, not required):
+  - Data loading and cleaning section
+  - Q1 section: try all 4 three-bridge combinations, report best
+  - Q2 section: weather regression, train/test split, evaluate
+  - Q3 section: weekly average visualization, then classifier
+
+--------------------------------------------------------------------------------
+6. REPORT REQUIREMENTS
+--------------------------------------------------------------------------------
+
+File: report.pdf (must be PDF, not .docx or other format)
+Reference template: MiniProjectReportTemplate.docx
+
+Required sections:
+
+  Section 1 -- Team Info:
+    - Name(s) of team member(s) -- maximum two people, same section
+    - Purdue username(s)
+    - Path chosen: Path 2
+
+  Section 2 -- Dataset Description:
+    - Describe the nyc_bicycle_counts_2016.csv dataset
+    - Date range, what each column means, size of dataset
+    - Any preprocessing steps applied (comma removal, numeric conversion, etc.)
+
+  Section 3 -- Methods:
+    - For each of the 3 analysis questions, write 1-2 paragraphs:
+        * What analysis/algorithm you chose
+        * Why you chose it
+        * What you expected it to tell you before running it
+
+  Section 4 -- Results:
+    - For each of the 3 analysis questions, present:
+        * The results of your analysis
+        * Visual aids (plots, tables, confusion matrices) where applicable
+        * Your answer to the question based on the results
+        * Explanation of why the results do or do not make sense
+    - NOTE: Negative or inconclusive results are acceptable, but you MUST
+      explain why the analysis may not have produced a clear answer.
+
+--------------------------------------------------------------------------------
+7. SUBMISSION CHECKLIST
+--------------------------------------------------------------------------------
+
+To Gradescope (before May 1, 2026 at 11:59pm ET):
+  [ ] MiniProjectPath2.py -- complete, runnable Python code
+  [ ] report.pdf -- PDF format only, covers all required sections
+  [ ] Do NOT submit a zip/archive
+  [ ] Do NOT submit a .docx file
+
+If working with a partner:
+  [ ] Only the team lead submits
+  [ ] Use Gradescope's group submission feature to link both members
+  [ ] Partner must be from the same section
+
+--------------------------------------------------------------------------------
+8. KNOWN ISSUES / NOTES
+--------------------------------------------------------------------------------
+
+  1. Filename bug: starter code uses 'NYC_Bicycle_Counts_2016.csv' but actual
+     file is 'nyc_bicycle_counts_2016.csv'. Fix this before running.
+
+  2. Total column: the starter code converts all 4 bridge columns to numeric
+     but does NOT convert the Total column. This must be added.
+
+  3. Day column encoding: the Day column contains string labels
+     ("Monday", "Tuesday", etc.). For classification in Q3, these must be
+     encoded as integer class labels (0-6) using a mapping or LabelEncoder.
+
+  4. Dataset size: coverage is April 1 to October 31, 2016 -- approximately
+     214 rows. This is a small dataset; keep this in mind when choosing
+     train/test split sizes and interpreting model performance.
+
+================================================================================
+END OF DOCUMENT
+================================================================================
