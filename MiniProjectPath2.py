@@ -80,27 +80,43 @@ print('R^2: ' + format(weather_r2, '.6f'))
 print('MSE: ' + format(weather_mse, '.2f'))
 print('RMSE: ' + format(weather_rmse, '.2f'))
 
-plt.figure(figsize=(7, 5))
-plt.scatter(weather_predictions, y_test)
+fig, ax = plt.subplots(figsize=(7, 5))
+ax.scatter(weather_predictions, y_test, alpha=0.7, edgecolors='white', linewidths=0.4, s=60, label='Test samples')
 line_min = min(weather_predictions.min(), y_test.min())
 line_max = max(weather_predictions.max(), y_test.max())
-plt.plot([line_min, line_max], [line_min, line_max])
-plt.xlabel('Predicted Total')
-plt.ylabel('Actual Total')
-plt.title('Weather Model: Predicted vs Actual Total Bike Traffic')
+ax.plot([line_min, line_max], [line_min, line_max], 'r--', linewidth=1.5, label='Ideal (y = x)')
+ax.set_xlabel('Predicted Total Bicyclists', fontsize=11)
+ax.set_ylabel('Actual Total Bicyclists', fontsize=11)
+ax.set_title('Weather Model: Predicted vs. Actual Total Bike Traffic', fontsize=12)
+ax.annotate(f'$R^2$ = {weather_r2:.3f}\nRMSE = {weather_rmse:,.0f}',
+            xy=(0.05, 0.92), xycoords='axes fraction',
+            fontsize=10, va='top',
+            bbox=dict(boxstyle='round,pad=0.3', fc='white', ec='gray', alpha=0.8))
+ax.legend(fontsize=9)
 plt.tight_layout()
 plt.savefig('q2_predicted_vs_actual.png', dpi=200)
+plt.close(fig)
 
 day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 daily_avg = dataset_2.groupby('Day')['Total'].mean().reindex(day_order)
 print(daily_avg)
-plt.figure(figsize=(7, 5))
-plt.bar(day_order, daily_avg.values)
-plt.xlabel('Day of Week')
-plt.ylabel('Average Total Bicyclists')
-plt.xticks(rotation=45)
+fig, ax = plt.subplots(figsize=(7, 5))
+colors = ['steelblue' if day not in ('Saturday', 'Sunday') else 'salmon' for day in day_order]
+bars = ax.bar(day_order, daily_avg.values, color=colors, edgecolor='white', linewidth=0.5)
+for bar, val in zip(bars, daily_avg.values):
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 150,
+            f'{val:,.0f}', ha='center', va='bottom', fontsize=8.5)
+ax.set_xlabel('Day of Week', fontsize=11)
+ax.set_ylabel('Average Total Bicyclists', fontsize=11)
+ax.set_title('Average Daily Bicycle Traffic by Day of Week', fontsize=12)
+ax.set_ylim(0, daily_avg.max() * 1.12)
+from matplotlib.patches import Patch
+ax.legend(handles=[Patch(color='steelblue', label='Weekday'),
+                   Patch(color='salmon', label='Weekend')], fontsize=9)
+plt.xticks(rotation=30, ha='right')
 plt.tight_layout()
 plt.savefig('q3a_weekly_pattern.png', dpi=200)
+plt.close(fig)
 
 day_map = {day: i for i, day in enumerate(day_order)}
 dataset_2['day_num'] = dataset_2['Day'].map(day_map)
