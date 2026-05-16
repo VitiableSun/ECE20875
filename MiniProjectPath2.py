@@ -88,10 +88,7 @@ ax.plot([line_min, line_max], [line_min, line_max], 'r--', linewidth=1.5, label=
 ax.set_xlabel('Predicted Total Bicyclists', fontsize=11)
 ax.set_ylabel('Actual Total Bicyclists', fontsize=11)
 ax.set_title('Weather Model: Predicted vs. Actual Total Bike Traffic', fontsize=12)
-ax.annotate(f'$R^2$ = {weather_r2:.3f}\nRMSE = {weather_rmse:,.0f}',
-            xy=(0.05, 0.92), xycoords='axes fraction',
-            fontsize=10, va='top',
-            bbox=dict(boxstyle='round,pad=0.3', fc='white', ec='gray', alpha=0.8))
+ax.annotate(f'$R^2$ = {weather_r2:.3f}\nRMSE = {weather_rmse:,.0f}', xy=(0.05, 0.92), xycoords='axes fraction', fontsize=10, va='top', bbox=dict(boxstyle='round,pad=0.3', fc='white', ec='gray', alpha=0.8))
 ax.legend(fontsize=9)
 plt.tight_layout()
 plt.savefig('q2_predicted_vs_actual.png', dpi=200)
@@ -104,15 +101,13 @@ fig, ax = plt.subplots(figsize=(7, 5))
 colors = ['steelblue' if day not in ('Saturday', 'Sunday') else 'salmon' for day in day_order]
 bars = ax.bar(day_order, daily_avg.values, color=colors, edgecolor='white', linewidth=0.5)
 for bar, val in zip(bars, daily_avg.values):
-    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 150,
-            f'{val:,.0f}', ha='center', va='bottom', fontsize=8.5)
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 150, f'{val:,.0f}', ha='center', va='bottom', fontsize=8.5)
 ax.set_xlabel('Day of Week', fontsize=11)
 ax.set_ylabel('Average Total Bicyclists', fontsize=11)
 ax.set_title('Average Daily Bicycle Traffic by Day of Week', fontsize=12)
 ax.set_ylim(0, daily_avg.max() * 1.12)
 from matplotlib.patches import Patch
-ax.legend(handles=[Patch(color='steelblue', label='Weekday'),
-                   Patch(color='salmon', label='Weekend')], fontsize=9)
+ax.legend(handles=[Patch(color='steelblue', label='Weekday'), Patch(color='salmon', label='Weekend')], fontsize=9)
 plt.xticks(rotation=30, ha='right')
 plt.tight_layout()
 plt.savefig('q3a_weekly_pattern.png', dpi=200)
